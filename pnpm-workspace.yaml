@@ -1,0 +1,11 @@
+allowBuilds:
+  '@scarf/scarf': true
+  core-js: true
+  core-js-pure: true
+  es5-ext: true
+  esbuild: true
+  msgpackr-extract: true
+minimumReleaseAgeExclude:
+  - deslop-js@0.0.19
+  - oxlint-plugin-react-doctor@0.3.0
+  - react-doctor@0.3.0
