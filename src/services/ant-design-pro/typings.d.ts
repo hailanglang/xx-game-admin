@@ -31,15 +31,7 @@ declare namespace API {
 
   type LoginResponseDto = {
     token: string;
-    currentUser: {
-      id: number;
-      username: string;
-      email?: string;
-      avatar?: string;
-      roleId?: number;
-      roleName?: string;
-      permissions: string[];
-    };
+    currentUser: UserInfoDto;
   };
 
   type RolesControllerAssignPermissionsParams = {
@@ -89,6 +81,16 @@ declare namespace API {
     avatar?: string;
     status?: boolean;
     roleId?: number;
+  };
+
+  type UserInfoDto = {
+    id: number;
+    username: string;
+    email: string;
+    avatar: string;
+    roleId: number;
+    roleName: string;
+    permissions: string[];
   };
 
   type UsersControllerFindAllParams = {

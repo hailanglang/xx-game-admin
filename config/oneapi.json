@@ -40,7 +40,14 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfoDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -530,7 +537,9 @@
     "title": "xxgame-admin-service",
     "description": "The admin service API description",
     "version": "1.0",
-    "contact": {}
+    "contact": {
+
+    }
   },
   "tags": [
     {
@@ -546,7 +555,7 @@
         "bearerFormat": "JWT",
         "type": "http",
         "name": "Authorization",
-        "description": "杈撳叆 JWT token",
+        "description": "输入 JWT token",
         "in": "header"
       }
     },
@@ -569,6 +578,44 @@
           "password"
         ]
       },
+      "UserInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "avatar": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleId": {
+            "type": "number",
+            "nullable": true
+          },
+          "roleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "permissions"
+        ]
+      },
       "LoginResponseDto": {
         "type": "object",
         "properties": {
@@ -576,42 +623,7 @@
             "type": "string"
           },
           "currentUser": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "number"
-              },
-              "username": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string",
-                "nullable": true
-              },
-              "avatar": {
-                "type": "string",
-                "nullable": true
-              },
-              "roleId": {
-                "type": "number",
-                "nullable": true
-              },
-              "roleName": {
-                "type": "string",
-                "nullable": true
-              },
-              "permissions": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            "required": [
-              "id",
-              "username",
-              "permissions"
-            ]
+            "$ref": "#/components/schemas/UserInfoDto"
           }
         },
         "required": [

@@ -6,7 +6,7 @@ import { request } from "@umijs/max";
 export async function authControllerGetCurrentUser(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/api/auth/currentUser", {
+  return request<API.UserInfoDto>("/api/auth/currentUser", {
     method: "GET",
     ...(options || {}),
   });
