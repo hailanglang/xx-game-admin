@@ -1,58 +1,135 @@
 {
-  "openapi": "3.0.1",
-  "info": {
-    "title": "Ant Design Pro",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "http://localhost:8000/"
-    },
-    {
-      "url": "https://localhost:8000/"
-    }
-  ],
+  "openapi": "3.0.0",
   "paths": {
-    "/api/currentUser": {
-      "get": {
-        "tags": ["api"],
-        "description": "获取当前的用户",
-        "operationId": "currentUser",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CurrentUser"
-                }
+    "/api/auth/login": {
+      "post": {
+        "description": "This operation allows you to create a new cat.",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
               }
             }
-          },
-          "401": {
-            "description": "Error",
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/LoginResponseDto"
                 }
               }
             }
           }
-        }
-      },
-      "x-swagger-router-controller": "api"
+        },
+        "summary": "Create a new cat",
+        "tags": [
+          "Auth"
+        ]
+      }
     },
-    "/api/login/captcha": {
+    "/api/auth/currentUser": {
+      "get": {
+        "operationId": "AuthController_getCurrentUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/users": {
       "post": {
-        "description": "发送验证码",
-        "operationId": "getFakeCaptcha",
-        "tags": ["login"],
+        "operationId": "UsersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "operationId": "UsersController_findAll",
         "parameters": [
           {
-            "name": "phone",
+            "name": "username",
+            "required": false,
             "in": "query",
-            "description": "手机号",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
             "schema": {
               "type": "string"
             }
@@ -60,26 +137,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FakeCaptcha"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/login/outLogin": {
-      "post": {
-        "description": "登录接口",
-        "operationId": "outLogin",
-        "tags": ["login"],
-        "responses": {
-          "200": {
-            "description": "Success",
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -87,409 +145,413 @@
                 }
               }
             }
-          },
-          "401": {
-            "description": "Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      },
+      "put": {
+        "operationId": "UsersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
             }
           }
-        }
-      },
-      "x-swagger-router-controller": "api"
-    },
-    "/api/login/account": {
-      "post": {
-        "tags": ["login"],
-        "description": "登录接口",
-        "operationId": "login",
+        ],
         "requestBody": {
-          "description": "登录系统",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginParams"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginResult"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
+                "$ref": "#/components/schemas/UpdateUserDto"
               }
             }
           }
         },
-        "x-codegen-request-body-name": "body"
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
       },
-      "x-swagger-router-controller": "api"
-    },
-    "/api/notices": {
-      "summary": "getNotices",
-      "description": "NoticeIconItem",
-      "get": {
-        "tags": ["api"],
-        "operationId": "getNotices",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NoticeIconList"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/rule": {
-      "get": {
-        "tags": ["rule"],
-        "description": "获取规则列表",
-        "operationId": "rule",
+      "delete": {
+        "operationId": "UsersController_remove",
         "parameters": [
           {
-            "name": "current",
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/roles": {
+      "post": {
+        "operationId": "RolesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Roles"
+        ]
+      },
+      "get": {
+        "operationId": "RolesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/api/roles/{id}": {
+      "get": {
+        "operationId": "RolesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Roles"
+        ]
+      },
+      "put": {
+        "operationId": "RolesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Roles"
+        ]
+      },
+      "delete": {
+        "operationId": "RolesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/api/roles/{id}/permissions": {
+      "post": {
+        "operationId": "RolesController_assignPermissions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignPermissionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/api/system/configs": {
+      "post": {
+        "operationId": "SystemController_createConfig",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSystemConfigDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      },
+      "get": {
+        "operationId": "SystemController_findAllConfigs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/api/system/configs/{key}": {
+      "get": {
+        "operationId": "SystemController_findConfigByKey",
+        "parameters": [
+          {
+            "name": "key",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      },
+      "put": {
+        "operationId": "SystemController_updateConfig",
+        "parameters": [
+          {
+            "name": "key",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSystemConfigDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      },
+      "delete": {
+        "operationId": "SystemController_deleteConfig",
+        "parameters": [
+          {
+            "name": "key",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/api/system/logs": {
+      "get": {
+        "operationId": "SystemController_findAllLogs",
+        "parameters": [
+          {
+            "name": "action",
+            "required": false,
             "in": "query",
-            "description": "当前的页码",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "adminUserId",
+            "required": false,
+            "in": "query",
             "schema": {
               "type": "number"
             }
           },
           {
-            "name": "pageSize",
+            "name": "page",
+            "required": false,
             "in": "query",
-            "description": "页面的容量",
             "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
               "type": "number"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RuleList"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": ""
           }
-        }
-      },
-      "post": {
-        "tags": ["rule"],
-        "description": "新建规则",
-        "operationId": "addRule",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RuleListItem"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["rule"],
-        "description": "新建规则",
-        "operationId": "updateRule",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RuleListItem"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["rule"],
-        "description": "删除规则",
-        "operationId": "removeRule",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "x-swagger-router-controller": "api"
-    },
-    "/swagger": {
-      "x-swagger-pipe": "swagger_raw"
+        },
+        "tags": [
+          "System"
+        ]
+      }
     }
   },
+  "info": {
+    "title": "xxgame-admin-service",
+    "description": "The admin service API description",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "cats aa",
+      "description": ""
+    }
+  ],
+  "servers": [],
   "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "name": "Authorization",
+        "description": "杈撳叆 JWT token",
+        "in": "header"
+      }
+    },
     "schemas": {
-      "CurrentUser": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "avatar": {
-            "type": "string"
-          },
-          "userid": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "signature": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "group": {
-            "type": "string"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "key": {
-                  "type": "string"
-                },
-                "label": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "notifyCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "unreadCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "country": {
-            "type": "string"
-          },
-          "access": {
-            "type": "string"
-          },
-          "geographic": {
-            "type": "object",
-            "properties": {
-              "province": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
-                  },
-                  "key": {
-                    "type": "string"
-                  }
-                }
-              },
-              "city": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
-                  },
-                  "key": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "address": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string"
-          }
-        }
-      },
-      "LoginResult": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          },
-          "currentAuthority": {
-            "type": "string"
-          }
-        }
-      },
-      "PageParams": {
-        "type": "object",
-        "properties": {
-          "current": {
-            "type": "number"
-          },
-          "pageSize": {
-            "type": "number"
-          }
-        }
-      },
-      "RuleListItem": {
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "disabled": {
-            "type": "boolean"
-          },
-          "href": {
-            "type": "string"
-          },
-          "avatar": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "owner": {
-            "type": "string"
-          },
-          "desc": {
-            "type": "string"
-          },
-          "callNo": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "datetime"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "datetime"
-          },
-          "progress": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "RuleList": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RuleListItem"
-            }
-          },
-          "total": {
-            "type": "integer",
-            "description": "列表的内容总数",
-            "format": "int32"
-          },
-          "success": {
-            "type": "boolean"
-          }
-        }
-      },
-      "FakeCaptcha": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "status": {
-            "type": "string"
-          }
-        }
-      },
-      "LoginParams": {
+      "LoginDto": {
         "type": "object",
         "properties": {
           "username": {
@@ -500,94 +562,178 @@
           },
           "autoLogin": {
             "type": "boolean"
-          },
-          "type": {
-            "type": "string"
           }
-        }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
       },
-      "ErrorResponse": {
-        "required": ["errorCode"],
+      "LoginResponseDto": {
         "type": "object",
         "properties": {
-          "errorCode": {
-            "type": "string",
-            "description": "业务约定的错误码"
-          },
-          "errorMessage": {
-            "type": "string",
-            "description": "业务上的错误信息"
-          },
-          "success": {
-            "type": "boolean",
-            "description": "业务上的请求是否成功"
-          }
-        }
-      },
-      "NoticeIconList": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NoticeIconItem"
-            }
-          },
-          "total": {
-            "type": "integer",
-            "description": "列表的内容总数",
-            "format": "int32"
-          },
-          "success": {
-            "type": "boolean"
-          }
-        }
-      },
-      "NoticeIconItemType": {
-        "title": "NoticeIconItemType",
-        "description": "已读未读列表的枚举",
-        "type": "string",
-        "properties": {},
-        "enum": ["notification", "message", "event"]
-      },
-      "NoticeIconItem": {
-        "type": "object",
-        "properties": {
-          "id": {
+          "token": {
             "type": "string"
           },
-          "extra": {
-            "type": "string",
-            "format": "any"
+          "currentUser": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "username": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "nullable": true
+              },
+              "avatar": {
+                "type": "string",
+                "nullable": true
+              },
+              "roleId": {
+                "type": "number",
+                "nullable": true
+              },
+              "roleName": {
+                "type": "string",
+                "nullable": true
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "username",
+              "permissions"
+            ]
+          }
+        },
+        "required": [
+          "token",
+          "currentUser"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
           },
-          "key": { "type": "string" },
-          "read": {
-            "type": "boolean"
+          "password": {
+            "type": "string",
+            "minLength": 6
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
           },
           "avatar": {
             "type": "string"
           },
-          "title": {
+          "roleId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "avatar": {
             "type": "string"
           },
           "status": {
+            "type": "boolean"
+          },
+          "roleId": {
+            "type": "number"
+          }
+        }
+      },
+      "CreateRoleDto": {
+        "type": "object",
+        "properties": {
+          "name": {
             "type": "string"
           },
-          "datetime": {
-            "type": "string",
-            "format": "date"
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "AssignPermissionDto": {
+        "type": "object",
+        "properties": {
+          "permissionIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "permissionIds"
+        ]
+      },
+      "CreateSystemConfigDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "object"
           },
           "description": {
             "type": "string"
           },
-          "type": {
-            "extensions": {
-              "x-is-enum": true
-            },
-            "$ref": "#/components/schemas/NoticeIconItemType"
+          "isEncrypted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ]
+      },
+      "UpdateSystemConfigDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "object"
+          },
+          "description": {
+            "type": "string"
+          },
+          "isEncrypted": {
+            "type": "boolean"
           }
         }
       }
     }
-  }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ]
 }

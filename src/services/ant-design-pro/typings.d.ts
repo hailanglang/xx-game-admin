@@ -1,101 +1,112 @@
-// @ts-ignore
-/* eslint-disable */
-
 declare namespace API {
-  type CurrentUser = {
-    name?: string;
-    avatar?: string;
-    userid?: string;
+  type AssignPermissionDto = {
+    permissionIds: number[];
+  };
+
+  type CreateRoleDto = {
+    name: string;
+    description?: string;
+  };
+
+  type CreateSystemConfigDto = {
+    key: string;
+    value: Record<string, any>;
+    description?: string;
+    isEncrypted?: boolean;
+  };
+
+  type CreateUserDto = {
+    username: string;
+    password: string;
     email?: string;
-    signature?: string;
-    title?: string;
-    group?: string;
-    tags?: { key?: string; label?: string }[];
-    notifyCount?: number;
-    unreadCount?: number;
-    country?: string;
-    access?: string;
-    geographic?: {
-      province?: { label?: string; key?: string };
-      city?: { label?: string; key?: string };
+    avatar?: string;
+    roleId?: number;
+  };
+
+  type LoginDto = {
+    username: string;
+    password: string;
+    autoLogin?: boolean;
+  };
+
+  type LoginResponseDto = {
+    token: string;
+    currentUser: {
+      id: number;
+      username: string;
+      email?: string;
+      avatar?: string;
+      roleId?: number;
+      roleName?: string;
+      permissions: string[];
     };
-    address?: string;
-    phone?: string;
   };
 
-  type LoginResult = {
-    status?: string;
-    type?: string;
-    currentAuthority?: string;
+  type RolesControllerAssignPermissionsParams = {
+    id: string;
   };
 
-  type PageParams = {
-    current?: number;
+  type RolesControllerFindOneParams = {
+    id: string;
+  };
+
+  type RolesControllerRemoveParams = {
+    id: string;
+  };
+
+  type RolesControllerUpdateParams = {
+    id: string;
+  };
+
+  type SystemControllerDeleteConfigParams = {
+    key: string;
+  };
+
+  type SystemControllerFindAllLogsParams = {
+    action?: string;
+    adminUserId?: number;
+    page?: number;
     pageSize?: number;
   };
 
-  type RuleListItem = {
-    key?: number;
-    disabled?: boolean;
-    href?: string;
-    avatar?: string;
-    name?: string;
-    owner?: string;
-    desc?: string;
-    callNo?: number;
-    status?: number;
-    updatedAt?: string;
-    createdAt?: string;
-    progress?: number;
+  type SystemControllerFindConfigByKeyParams = {
+    key: string;
   };
 
-  type RuleList = {
-    data?: RuleListItem[];
-    /** 列表的内容总数 */
-    total?: number;
-    success?: boolean;
+  type SystemControllerUpdateConfigParams = {
+    key: string;
   };
 
-  type FakeCaptcha = {
-    code?: number;
-    status?: string;
-  };
-
-  type LoginParams = {
-    username?: string;
-    password?: string;
-    autoLogin?: boolean;
-    type?: string;
-  };
-
-  type ErrorResponse = {
-    /** 业务约定的错误码 */
-    errorCode: string;
-    /** 业务上的错误信息 */
-    errorMessage?: string;
-    /** 业务上的请求是否成功 */
-    success?: boolean;
-  };
-
-  type NoticeIconList = {
-    data?: NoticeIconItem[];
-    /** 列表的内容总数 */
-    total?: number;
-    success?: boolean;
-  };
-
-  type NoticeIconItemType = 'notification' | 'message' | 'event';
-
-  type NoticeIconItem = {
-    id?: string;
-    extra?: string;
-    key?: string;
-    read?: boolean;
-    avatar?: string;
-    title?: string;
-    status?: string;
-    datetime?: string;
+  type UpdateSystemConfigDto = {
+    value?: Record<string, any>;
     description?: string;
-    type?: NoticeIconItemType;
+    isEncrypted?: boolean;
+  };
+
+  type UpdateUserDto = {
+    password?: string;
+    email?: string;
+    avatar?: string;
+    status?: boolean;
+    roleId?: number;
+  };
+
+  type UsersControllerFindAllParams = {
+    username?: string;
+    status?: boolean;
+    page?: number;
+    pageSize?: number;
+  };
+
+  type UsersControllerFindOneParams = {
+    id: string;
+  };
+
+  type UsersControllerRemoveParams = {
+    id: string;
+  };
+
+  type UsersControllerUpdateParams = {
+    id: string;
   };
 }
