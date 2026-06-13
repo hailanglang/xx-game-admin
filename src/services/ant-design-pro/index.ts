@@ -6,9 +6,11 @@ import * as auth from "./auth";
 import * as users from "./users";
 import * as roles from "./roles";
 import * as system from "./system";
+import * as api from "./api";
 export default {
   auth,
   users,
   roles,
   system,
+  api
 };
