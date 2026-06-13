@@ -1,130 +1,130 @@
 # CLAUDE.md
 
-## Project
+## 项目
 
-Ant Design Pro — React enterprise boilerplate on Umi Max v4, antd v6, ProComponents v3.
+Ant Design Pro — 基于 Umi Max v4、antd v6、ProComponents v3 的 React 企业级脚手架。
 
-## Commands
+## 命令
 
-`npm start` (dev+mock), `npm run dev` (no mock), `npm run build` (utoopack), `npm run lint` (Biome+tsc), `npm run test` (Jest), `npx antd lint ./src` (antd-specific checks).
+`npm start`（开发 + Mock）、`npm run dev`（无 Mock）、`npm run build`（utoopack）、`npm run lint`（Biome + tsc）、`npm run test`（Jest）、`npx antd lint ./src`（antd 专属检查）。
 
-Other: `npm run openapi` (regenerate `src/services/`), `npm run simple` (**irreversible** — commit first), `npm run biome` (auto-fix), `npm run tsc` (type-check only).
+其他：`npm run openapi`（重新生成 `src/services/`）、`npm run simple`（**不可逆** — 先提交）、`npm run biome`（自动修复）、`npm run tsc`（仅类型检查）。
 
-## Critical Rules
+## 关键规则
 
-- **Never edit `src/services/ant-design-pro/`** — auto-generated, regenerate with `npm run openapi`
-- **Biome only** — no ESLint, no Prettier. Both `npm run lint` and `npx antd lint ./src` must pass before commit
-- **Always `npx antd info <Component>` before writing antd code** — don't guess APIs from memory
-- **`npm run simple` is irreversible** — always commit/branch first
-- **Conventional commits** required (commitlint enforced)
-- **TypeScript strict** · **Node ≥ 22** · **`package-lock.json`** (not yarn/pnpm)
-- **`.umi` dir is auto-generated** — delete `src/.umi` and restart if dev server acts up
+- **切勿编辑 `src/services/ant-design-pro/`** — 自动生成，通过 `npm run openapi` 重新生成
+- **仅用 Biome** — 无 ESLint、无 Prettier。提交前必须同时通过 `npm run lint` 和 `npx antd lint ./src`
+- **编写 antd 代码前始终执行 `npx antd info <组件>`** — 不要凭记忆猜测 API
+- **`npm run simple` 不可逆** — 始终先提交或创建分支
+- **需要 Conventional Commits**（commitlint 强制检查）
+- **TypeScript 严格模式** · **Node ≥ 22** · **`package-lock.json`**（不用 yarn/pnpm）
+- **`.umi` 目录为自动生成** — 如果开发服务器异常，删除 `src/.umi` 后重启
 
-## Architecture Essentials
+## 架构要点
 
-**Config**: `config/config.ts` (defineConfig), `config/routes.ts` (declarative routes). Route `name` → `menu.xxx` i18n key; `access` field gates visibility.
+**配置**：`config/config.ts`（defineConfig）、`config/routes.ts`（声明式路由）。路由 `name` → `menu.xxx` 国际化键；`access` 字段控制可见性。
 
-**Convention files** (`src/`): `app.tsx` (runtime config + `getInitialState`), `access.ts` (permissions), `global.tsx` (side effects), `loading.tsx`, `typings.d.ts`.
+**约定文件**（`src/`）：`app.tsx`（运行时配置 + `getInitialState`）、`access.ts`（权限）、`global.tsx`（副作用）、`loading.tsx`、`typings.d.ts`。
 
-**Auth**: `getInitialState()` → `GET /api/currentUser`; 401 → redirect login. `access.ts`: `canAdmin = currentUser.access === 'admin'`. Mock creds: `admin`/`ant.design` or `user`/`ant.design`.
+**认证**：`getInitialState()` → `GET /api/currentUser`；401 → 跳转登录页。`access.ts`：`canAdmin = currentUser.access === 'admin'`。Mock 凭据：`admin`/`ant.design` 或 `user`/`ant.design`。
 
-**State**: `useModel('filename')` for global hooks (`src/models/`). `useModel('@@initialState')` for currentUser/settings. ProTable `request` prop for most data loading. `@tanstack/react-query` for complex server state.
+**状态管理**：全局 hooks 使用 `useModel('文件名')`（`src/models/`）。currentUser/settings 使用 `useModel('@@initialState')`。大多数数据加载通过 ProTable 的 `request` 属性。复杂服务端状态使用 `@tanstack/react-query`。
 
-**Styling priority**: Tailwind CSS v4 (layout) → antd-style v4 / `createStyles` (theme tokens) → CSS Modules → Less (legacy only).
+**样式优先级**：Tailwind CSS v4（布局）→ antd-style v4 / `createStyles`（主题 tokens）→ CSS Modules → Less（仅遗留代码）。
 
-**Request**: built-in `request` from `@umijs/max`, configured in `src/requestErrorConfig.ts`. Per-page `service.ts` for non-generated APIs.
+**请求**：使用 `@umijs/max` 内置的 `request`，在 `src/requestErrorConfig.ts` 中配置。非自动生成的 API 使用页面级 `service.ts`。
 
-**i18n**: 8 locales in `src/locales/`. `useIntl().formatMessage({ id, defaultMessage })`.
+**国际化**：`src/locales/` 中 8 种语言。`useIntl().formatMessage({ id, defaultMessage })`。
 
-**Mock**: `mock/` (global) + `src/pages/**/_mock.ts` (co-located). Express-style handlers.
+**Mock**：`mock/`（全局）+ `src/pages/**/_mock.ts`（页面级）。Express 风格处理器。
 
-**Cloudflare Worker**: `cloudflare-worker/` — separate Hono app, own `package.json`, not an npm workspace.
+**Cloudflare Worker**：`cloudflare-worker/` — 独立的 Hono 应用，有自己的 `package.json`，不是 npm workspace。
 
-## AI Skills
+## AI 技能
 
-This project ships with two built-in Claude Code Skills (`.claude/skills/`). If you already have these skills in your project, no installation is needed — just run them directly. To update to the latest skill definitions, run `npx skills add ant-design/ant-design-pro`.
+本项目内置两个 Claude Code 技能（`.claude/skills/`）。如果你的项目中已有这些技能，无需安装 — 直接运行即可。要更新到最新的技能定义，执行 `npx skills add ant-design/ant-design-pro`。
 
-### `/pro-upgrade` — Project Upgrade
+### `/pro-upgrade` — 项目升级
 
-Run `/pro-upgrade` in Claude Code to auto-upgrade the project to the latest Ant Design Pro version. It diffs the latest template against this project and merges framework changes while preserving business code. Works for any version gap (v5→v6, v6.x→latest, etc.).
+在 Claude Code 中运行 `/pro-upgrade` 自动将项目升级到最新的 Ant Design Pro 版本。它会将最新模板与本项目进行对比，合并框架变更同时保留业务代码。适用于任何版本跨度（v5→v6、v6.x→最新版等）。
 
 ### `/antd` — Ant Design CLI
 
-Run `/antd` in Claude Code for any antd-related work. It provides access to `@ant-design/cli` with offline metadata for antd v3/v4/v5/v6. Key commands:
+在 Claude Code 中运行 `/antd` 处理任何 antd 相关工作。它提供 `@ant-design/cli` 访问，包含 antd v3/v4/v5/v6 的离线元数据。关键命令：
 
-- `npx antd info <Component>` — look up props/API before writing code (mandatory)
-- `npx antd lint ./src` — check for deprecated or problematic usage (must pass before commit)
-- `npx antd demo <Component> <demo>` — get working code examples
-- `npx antd migrate <from> <to>` — migration checklist between major versions
+- `npx antd info <组件>` — 编写代码前查询属性/API（强制要求）
+- `npx antd lint ./src` — 检查已弃用或有问题的用法（提交前必须通过）
+- `npx antd demo <组件> <示例>` — 获取可工作的代码示例
+- `npx antd migrate <旧版本> <新版本>` — 主要版本间的迁移清单
 
-## Page Co-location
+## 页面文件组织
 
-Each page dir: `index.tsx`, optional `service.ts`, `_mock.ts`, `data.d.ts`, style files. Keep page-specific code with the page.
+每个页面目录包含：`index.tsx`、可选的 `service.ts`、`_mock.ts`、`data.d.ts`、样式文件。将页面特定代码与页面放在一起。
 
 # CLAUDE.md
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+减少常见 LLM 编码错误的行为准则。可根据需要与项目特定说明合并使用。
 
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+**权衡：** 这些准则倾向于谨慎而非速度。对于简单任务，请自行判断。
 
-## 1. Think Before Coding
+## 1. 先思考再编码
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+**不要假设。不要隐藏困惑。暴露取舍。**
 
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
+在实施之前：
+- 明确陈述你的假设。如果不确定，请提问。
+- 如果存在多种解释，请全部列出 — 不要默默选择其一。
+- 如果存在更简单的方案，请指出。必要时提出异议。
+- 如果某件事不清楚，停下来。指出令人困惑之处。提问。
 
-## 2. Simplicity First
+## 2. 简洁优先
 
-**Minimum code that solves the problem. Nothing speculative.**
+**解决问题的代码量最小。不做任何推测性工作。**
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
+- 不实现需求之外的功能。
+- 不为单次使用的代码创建抽象。
+- 不提供未经要求的"灵活性"或"可配置性"。
+- 不为不可能的场景做错误处理。
+- 如果你写了 200 行但可以精简为 50 行，重写它。
 
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+问问自己："资深工程师会认为这过于复杂吗？"如果是，请简化。
 
-## 3. Surgical Changes
+## 3. 精准修改
 
-**Touch only what you must. Clean up only your own mess.**
+**只动必须动的地方。只清理自己造成的混乱。**
 
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
+编辑现有代码时：
+- 不要"改进"相邻的代码、注释或格式。
+- 不要重构没有问题的部分。
+- 匹配现有风格，即使你有不同的做法。
+- 如果你发现无关的无效代码，提一下 — 但不要删除它。
 
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
+当你的修改产生了孤儿代码：
+- 删除你的修改导致不再使用的导入/变量/函数。
+- 除非被要求，否则不要删除预先存在的无效代码。
 
-The test: Every changed line should trace directly to the user's request.
+检验标准：每一行被修改的代码都应能直接追溯回用户的需求。
 
-## 4. Goal-Driven Execution
+## 4. 目标驱动执行
 
-**Define success criteria. Loop until verified.**
+**定义成功标准。持续循环直到验证通过。**
 
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
+将任务转化为可验证的目标：
+- "添加验证" → "为无效输入编写测试，然后让它们通过"
+- "修复 bug" → "编写能复现它的测试，然后让测试通过"
+- "重构 X" → "确保重构前后测试均通过"
 
-For multi-step tasks, state a brief plan:
+对于多步骤任务，陈述简要计划：
 ```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
+1. [步骤] → 验证：[检查项]
+2. [步骤] → 验证：[检查项]
+3. [步骤] → 验证：[检查项]
 ```
 
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+明确成功标准让你能独立循环。模糊的标准（"让它工作"）需要持续的澄清。
 
 ---
 
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+**这些准则生效的标志是：** diff 中不必要的变更减少，因过度复杂导致的返工减少，且在实施之前而非犯错之后提出澄清性问题。
 
 ---
