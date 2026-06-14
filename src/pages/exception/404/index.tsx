@@ -1,10 +1,9 @@
-import { Link, useIntl } from '@umijs/max';
+import { Link } from '@umijs/max';
 
 import { Button, Card, Result } from 'antd';
 import React from 'react';
 
 const Exception404: React.FC = () => {
-  const intl = useIntl();
   return (
     <Card variant="borderless">
       <Result
