@@ -34,6 +34,23 @@ export default [
     ],
   },
   {
+    path: '/list',
+    icon: 'table',
+    name: 'list',
+    routes: [
+      {
+        path: '/list',
+        redirect: '/list/basic-list',
+      },
+      {
+        name: 'basic-list',
+        icon: 'unorderedList',
+        path: '/list/basic-list',
+        component: './list/basic-list',
+      },
+    ],
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },
