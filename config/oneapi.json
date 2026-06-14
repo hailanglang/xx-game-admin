@@ -3,7 +3,6 @@
   "paths": {
     "/api/auth/login": {
       "post": {
-        "description": "This operation allows you to create a new cat.",
         "operationId": "AuthController_login",
         "parameters": [],
         "requestBody": {
@@ -28,7 +27,7 @@
             }
           }
         },
-        "summary": "Create a new cat",
+        "summary": "用户登录",
         "tags": [
           "Auth"
         ]
@@ -50,6 +49,7 @@
             }
           }
         },
+        "summary": "获取当前用户信息",
         "tags": [
           "Auth"
         ]
@@ -81,6 +81,7 @@
             }
           }
         },
+        "summary": "创建用户",
         "tags": [
           "Users"
         ]
@@ -138,6 +139,7 @@
             }
           }
         },
+        "summary": "获取用户列表",
         "tags": [
           "Users"
         ]
@@ -168,6 +170,7 @@
             }
           }
         },
+        "summary": "获取用户详情",
         "tags": [
           "Users"
         ]
@@ -206,6 +209,7 @@
             }
           }
         },
+        "summary": "更新用户",
         "tags": [
           "Users"
         ]
@@ -234,6 +238,7 @@
             }
           }
         },
+        "summary": "删除用户",
         "tags": [
           "Users"
         ]
@@ -255,9 +260,17 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDto"
+                }
+              }
+            }
           }
         },
+        "summary": "创建角色",
         "tags": [
           "Roles"
         ]
@@ -273,13 +286,14 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object"
+                    "$ref": "#/components/schemas/RoleDetailDto"
                   }
                 }
               }
             }
           }
         },
+        "summary": "获取角色列表",
         "tags": [
           "Roles"
         ]
@@ -304,12 +318,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RoleDetailDto"
                 }
               }
             }
           }
         },
+        "summary": "获取角色详情",
         "tags": [
           "Roles"
         ]
@@ -328,9 +343,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDto"
+                }
+              }
+            }
           }
         },
+        "summary": "更新角色",
         "tags": [
           "Roles"
         ]
@@ -349,9 +372,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDto"
+                }
+              }
+            }
           }
         },
+        "summary": "删除角色",
         "tags": [
           "Roles"
         ]
@@ -386,12 +417,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RoleDetailDto"
                 }
               }
             }
           }
         },
+        "summary": "分配角色权限",
         "tags": [
           "Roles"
         ]
@@ -416,6 +448,7 @@
             "description": ""
           }
         },
+        "summary": "创建系统配置",
         "tags": [
           "System"
         ]
@@ -428,6 +461,7 @@
             "description": ""
           }
         },
+        "summary": "获取系统配置列表",
         "tags": [
           "System"
         ]
@@ -451,6 +485,7 @@
             "description": ""
           }
         },
+        "summary": "获取系统配置详情（按 key）",
         "tags": [
           "System"
         ]
@@ -482,6 +517,7 @@
             "description": ""
           }
         },
+        "summary": "更新系统配置",
         "tags": [
           "System"
         ]
@@ -503,6 +539,7 @@
             "description": ""
           }
         },
+        "summary": "删除系统配置",
         "tags": [
           "System"
         ]
@@ -555,8 +592,59 @@
             "description": ""
           }
         },
+        "summary": "获取操作日志列表",
         "tags": [
           "System"
+        ]
+      }
+    },
+    "/api/permissions": {
+      "get": {
+        "operationId": "PermissionsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PermissionItemDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "获取所有权限列表（平铺）",
+        "tags": [
+          "Permissions"
+        ]
+      }
+    },
+    "/api/permissions/modules": {
+      "get": {
+        "operationId": "PermissionsController_findGrouped",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PermissionGroupDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "获取按模块分组的权限列表",
+        "tags": [
+          "Permissions"
         ]
       }
     }
@@ -571,7 +659,7 @@
   },
   "tags": [
     {
-      "name": "cats aa",
+      "name": "V1.0",
       "description": ""
     }
   ],
@@ -852,6 +940,138 @@
           "name"
         ]
       },
+      "RoleDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSystem": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "isSystem",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "RolePermissionDto": {
+        "type": "object",
+        "properties": {
+          "roleId": {
+            "type": "number"
+          },
+          "permissionId": {
+            "type": "number"
+          },
+          "permission": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string",
+                "nullable": true
+              },
+              "module": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "createdAt": {
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "code",
+              "name",
+              "description",
+              "module",
+              "action",
+              "createdAt"
+            ]
+          }
+        },
+        "required": [
+          "roleId",
+          "permissionId",
+          "permission"
+        ]
+      },
+      "RoleDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSystem": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RolePermissionDto"
+            }
+          },
+          "userCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "isSystem",
+          "createdAt",
+          "updatedAt",
+          "permissions",
+          "userCount"
+        ]
+      },
       "AssignPermissionDto": {
         "type": "object",
         "properties": {
@@ -900,6 +1120,55 @@
             "type": "boolean"
           }
         }
+      },
+      "PermissionItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "module": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "module",
+          "action"
+        ]
+      },
+      "PermissionGroupDto": {
+        "type": "object",
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "moduleName": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionItemDto"
+            }
+          }
+        },
+        "required": [
+          "module",
+          "moduleName",
+          "permissions"
+        ]
       }
     }
   },

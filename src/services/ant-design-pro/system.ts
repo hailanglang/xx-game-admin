@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 此处后端没有提供注释 GET /api/system/configs */
+/** 获取系统配置列表 GET /api/system/configs */
 export async function systemControllerFindAllConfigs(options?: {
   [key: string]: any;
 }) {
@@ -12,7 +12,7 @@ export async function systemControllerFindAllConfigs(options?: {
   });
 }
 
-/** 此处后端没有提供注释 POST /api/system/configs */
+/** 创建系统配置 POST /api/system/configs */
 export async function systemControllerCreateConfig(
   body: API.CreateSystemConfigDto,
   options?: { [key: string]: any }
@@ -27,7 +27,7 @@ export async function systemControllerCreateConfig(
   });
 }
 
-/** 此处后端没有提供注释 GET /api/system/configs/${param0} */
+/** 获取系统配置详情（按 key） GET /api/system/configs/${param0} */
 export async function systemControllerFindConfigByKey(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SystemControllerFindConfigByKeyParams,
@@ -41,7 +41,7 @@ export async function systemControllerFindConfigByKey(
   });
 }
 
-/** 此处后端没有提供注释 PUT /api/system/configs/${param0} */
+/** 更新系统配置 PUT /api/system/configs/${param0} */
 export async function systemControllerUpdateConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SystemControllerUpdateConfigParams,
@@ -60,7 +60,7 @@ export async function systemControllerUpdateConfig(
   });
 }
 
-/** 此处后端没有提供注释 DELETE /api/system/configs/${param0} */
+/** 删除系统配置 DELETE /api/system/configs/${param0} */
 export async function systemControllerDeleteConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SystemControllerDeleteConfigParams,
@@ -74,7 +74,7 @@ export async function systemControllerDeleteConfig(
   });
 }
 
-/** 此处后端没有提供注释 GET /api/system/logs */
+/** 获取操作日志列表 GET /api/system/logs */
 export async function systemControllerFindAllLogs(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SystemControllerFindAllLogsParams,

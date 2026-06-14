@@ -41,6 +41,54 @@ declare namespace API {
     pageSize: number;
   };
 
+  type PermissionGroupDto = {
+    module: string;
+    moduleName: string;
+    permissions: PermissionItemDto[];
+  };
+
+  type PermissionItemDto = {
+    id: number;
+    code: string;
+    name: string;
+    module: string;
+    action: string;
+  };
+
+  type RoleDetailDto = {
+    id: number;
+    name: string;
+    description: string;
+    isSystem: boolean;
+    createdAt: string;
+    updatedAt: string;
+    permissions: RolePermissionDto[];
+    userCount: number;
+  };
+
+  type RoleDto = {
+    id: number;
+    name: string;
+    description: string;
+    isSystem: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  type RolePermissionDto = {
+    roleId: number;
+    permissionId: number;
+    permission: {
+      id: number;
+      code: string;
+      name: string;
+      description: string;
+      module: string;
+      action: string;
+      createdAt: string;
+    };
+  };
+
   type RolesControllerAssignPermissionsParams = {
     id: string;
   };

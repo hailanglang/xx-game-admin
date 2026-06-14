@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 此处后端没有提供注释 GET /api/users */
+/** 获取用户列表 GET /api/users */
 export async function usersControllerFindAll(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.UsersControllerFindAllParams,
@@ -21,7 +21,7 @@ export async function usersControllerFindAll(
   });
 }
 
-/** 此处后端没有提供注释 POST /api/users */
+/** 创建用户 POST /api/users */
 export async function usersControllerCreate(
   body: API.CreateUserDto,
   options?: { [key: string]: any }
@@ -36,7 +36,7 @@ export async function usersControllerCreate(
   });
 }
 
-/** 此处后端没有提供注释 GET /api/users/${param0} */
+/** 获取用户详情 GET /api/users/${param0} */
 export async function usersControllerFindOne(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.UsersControllerFindOneParams,
@@ -50,7 +50,7 @@ export async function usersControllerFindOne(
   });
 }
 
-/** 此处后端没有提供注释 PUT /api/users/${param0} */
+/** 更新用户 PUT /api/users/${param0} */
 export async function usersControllerUpdate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.UsersControllerUpdateParams,
@@ -69,7 +69,7 @@ export async function usersControllerUpdate(
   });
 }
 
-/** 此处后端没有提供注释 DELETE /api/users/${param0} */
+/** 删除用户 DELETE /api/users/${param0} */
 export async function usersControllerRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.UsersControllerRemoveParams,

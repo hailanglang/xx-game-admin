@@ -6,9 +6,11 @@ import * as auth from "./auth";
 import * as users from "./users";
 import * as roles from "./roles";
 import * as system from "./system";
+import * as permissions from "./permissions";
 export default {
   auth,
   users,
   roles,
   system,
+  permissions,
 };
