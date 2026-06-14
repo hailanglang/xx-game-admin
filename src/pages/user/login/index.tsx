@@ -22,6 +22,7 @@ import { createStyles } from 'antd-style';
 import React, { startTransition, useState } from 'react';
 import { Footer } from '@/components';
 import { authControllerLogin } from '@/services/ant-design-pro/auth';
+import { useAuthStore } from '@/stores/authStore';
 import Settings from '../../../../config/defaultSettings';
 
 const useStyles = createStyles(({ token }) => {
@@ -110,6 +111,7 @@ const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<{
     status?: string;
   }>({});
+  const { setToken } = useAuthStore();
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
   const { message } = App.useApp();
@@ -138,6 +140,7 @@ const Login: React.FC = () => {
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
+    console.log('userInfo', userInfo);
     if (userInfo) {
       startTransition(() => {
         setInitialState((s) => ({
@@ -153,6 +156,7 @@ const Login: React.FC = () => {
       // 登录
       const msg = await authControllerLogin(values);
       if (msg.token) {
+        setToken(msg.token);
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
@@ -161,6 +165,7 @@ const Login: React.FC = () => {
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         const redirectUrl = getSafeRedirectUrl(urlParams.get('redirect'));
+        console.log('redirectUrl', redirectUrl);
         window.location.href = redirectUrl;
         return;
       }

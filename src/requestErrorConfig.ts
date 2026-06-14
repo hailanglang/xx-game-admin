@@ -2,6 +2,7 @@
 import type { RequestConfig } from '@umijs/max';
 import { getIntl } from '@umijs/max';
 import { message, notification } from 'antd';
+import { useAuthStore } from '@/stores/authStore';
 
 // 错误处理方案： 错误类型
 enum ErrorShowType {
@@ -32,7 +33,8 @@ export const errorConfig: RequestConfig = {
     errorThrower: (res) => {
       const { success, data, errorCode, errorMessage, showType } =
         res as unknown as ResponseStructure;
-      if (!success) {
+      // 后端明确返回 success: false 时才抛错；被响应拦截器解包后无 success 字段则跳过
+      if (success === false) {
         const error: any = new Error(errorMessage);
         error.name = 'BizError';
         error.info = { errorCode, errorMessage, showType, data };
@@ -93,16 +95,35 @@ export const errorConfig: RequestConfig = {
   // 请求拦截器
   requestInterceptors: [
     (config: RequestOptions) => {
-      // 拦截请求配置，进行个性化处理。
-      // 示例：为请求附加 token（按需启用）
-      // const token = localStorage.getItem('token');
-      // if (token) {
-      //   config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-      // }
+      // 携带 token
+      const token = useAuthStore.getState().token;
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${token}`,
+        };
+      }
       return config;
     },
   ],
 
   // 响应拦截器
-  responseInterceptors: [],
+  responseInterceptors: [
+    (response) => {
+      // 后端统一包装 { success, data, errorCode, errorMessage }
+      // 解包：success 为 true 时，将 data 提升为响应体
+      const body = response.data as Record<string, any>;
+      if (
+        body &&
+        typeof body === 'object' &&
+        'success' in body &&
+        'data' in body
+      ) {
+        if (body.success === true) {
+          response.data = body.data;
+        }
+      }
+      return response;
+    },
+  ],
 };

@@ -34,12 +34,6 @@ export default [
     ],
   },
   {
-    name: '查询表格',
-    icon: 'table',
-    path: '/list',
-    component: './table-list',
-  },
-  {
     path: '/',
     redirect: '/welcome',
   },
