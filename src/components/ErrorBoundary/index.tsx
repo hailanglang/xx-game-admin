@@ -1,4 +1,5 @@
 import { getIntl } from '@umijs/max';
+
 import { Button, Card, Result } from 'antd';
 import React from 'react';
 
@@ -49,10 +50,7 @@ function renderErrorFallback(
         extra={[
           isChunkError && (
             <Button type="primary" key="retry" onClick={onRetry}>
-              {intl.formatMessage({
-                id: 'app.error.retry',
-                defaultMessage: 'Retry',
-              })}
+              重试
             </Button>
           ),
           <Button
@@ -60,16 +58,10 @@ function renderErrorFallback(
             key="reload"
             onClick={onReload}
           >
-            {intl.formatMessage({
-              id: 'app.error.reload',
-              defaultMessage: 'Reload Page',
-            })}
+            刷新页面
           </Button>,
           <Button href="/" key="home">
-            {intl.formatMessage({
-              id: 'app.error.home',
-              defaultMessage: 'Back Home',
-            })}
+            返回首页
           </Button>,
         ].filter(Boolean)}
       />

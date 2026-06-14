@@ -4,7 +4,7 @@ import {
   ForkOutlined,
   GlobalOutlined,
 } from '@ant-design/icons';
-import { getAllLocales, getLocale, history, setLocale } from '@umijs/max';
+import { history } from '@umijs/max';
 import type { MenuProps } from 'antd';
 import { Button, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
@@ -80,8 +80,8 @@ export const VersionDropdown: React.FC = () => {
 
 export const LangDropdown: React.FC = () => {
   const { styles } = useStyles();
-  const allLocales = useMemo(() => getAllLocales(), []);
-  const currentLocale = getLocale();
+  const allLocales = ['zh-CN'];
+  const currentLocale = 'zh-CN';
   const supportLocales = allLocales.filter((l) => l in localeLabelMap);
 
   if (supportLocales.length <= 1) {
@@ -101,7 +101,6 @@ export const LangDropdown: React.FC = () => {
 
   const onLangClick: MenuProps['onClick'] = ({ key }) => {
     if (key.startsWith('lang-')) {
-      setLocale(key.replace('lang-', ''), false);
     }
   };
 
