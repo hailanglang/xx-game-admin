@@ -8,7 +8,7 @@ export async function usersControllerFindAll(
   params: API.UsersControllerFindAllParams,
   options?: { [key: string]: any }
 ) {
-  return request<any>("/api/users", {
+  return request<API.PaginatedUserDto>("/api/users", {
     method: "GET",
     params: {
       // page has a default value: 1
@@ -26,7 +26,7 @@ export async function usersControllerCreate(
   body: API.CreateUserDto,
   options?: { [key: string]: any }
 ) {
-  return request<any>("/api/users", {
+  return request<API.UserDto>("/api/users", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -43,7 +43,7 @@ export async function usersControllerFindOne(
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<Record<string, any>>(`/api/users/${param0}`, {
+  return request<API.UserDetailDto>(`/api/users/${param0}`, {
     method: "GET",
     params: { ...queryParams },
     ...(options || {}),
@@ -58,7 +58,7 @@ export async function usersControllerUpdate(
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<any>(`/api/users/${param0}`, {
+  return request<API.UserDto>(`/api/users/${param0}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -76,7 +76,7 @@ export async function usersControllerRemove(
   options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<any>(`/api/users/${param0}`, {
+  return request<API.UserDto>(`/api/users/${param0}`, {
     method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),

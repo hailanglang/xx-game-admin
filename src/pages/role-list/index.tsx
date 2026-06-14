@@ -1,8 +1,10 @@
 import { DownOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { BadgeProps } from 'antd';
 import {
   Avatar,
+  Badge,
   Card,
   Dropdown,
   Input,
@@ -13,18 +15,26 @@ import {
 } from 'antd';
 import type { FC } from 'react';
 import React from 'react';
-import type { BasicListItemDataType } from './data.d';
 import { addUser, queryUserList, removeUser, updateUser } from './service';
 import useStyles from './style.style';
 
 const { Search } = Input;
 
+const statusMap: Record<
+  string,
+  { status: BadgeProps['status']; text: string }
+> = {
+  true: { status: 'success', text: '启用' },
+  false: { status: 'error', text: '禁用' },
+};
+
 const ListContent = ({
-  data: { email, roleName },
+  data: { email, role, status },
 }: {
-  data: BasicListItemDataType;
+  data: API.UserDetailDto;
 }) => {
   const { styles } = useStyles();
+  const s = statusMap[String(status)] ?? { status: 'default', text: '未知' };
   return (
     <div>
       <div className={styles.listContentItem}>
@@ -33,7 +43,13 @@ const ListContent = ({
       </div>
       <div className={styles.listContentItem}>
         <span>角色</span>
-        <p>{roleName}</p>
+        <p>{role.name}</p>
+      </div>
+      <div className={styles.listContentItem}>
+        <span>状态</span>
+        <p>
+          <Badge status={s.status} text={s.text} />
+        </p>
       </div>
     </div>
   );
@@ -79,11 +95,16 @@ const BasicList: FC = () => {
       id,
     });
   };
+  const showEditModal = (item: API.UserDetailDto) => {
+    // TODO: 实现编辑用户弹窗
+    console.log('编辑用户', item);
+  };
   const editAndDelete = (
     key: string | number,
-    currentItem: BasicListItemDataType,
+    currentItem: API.UserDetailDto,
   ) => {
-    if (key === 'delete') {
+    if (key === 'edit') showEditModal(currentItem);
+    else if (key === 'delete') {
       Modal.confirm({
         title: '删除用户',
         content: '确定删除该用户吗？',
@@ -112,12 +133,16 @@ const BasicList: FC = () => {
     </div>
   );
 
-  const renderMoreBtn = (item: BasicListItemDataType) => {
+  const renderMoreBtn = (item: API.UserDetailDto) => {
     return (
       <Dropdown
         menu={{
           onClick: ({ key }) => editAndDelete(key, item),
           items: [
+            {
+              key: 'edit',
+              label: '编辑',
+            },
             {
               key: 'delete',
               label: '删除',
@@ -148,7 +173,14 @@ const BasicList: FC = () => {
               pagination={paginationProps}
               dataSource={list}
               renderItem={(item) => (
-                <List.Item actions={[renderMoreBtn(item)]}>
+                <List.Item
+                  actions={[
+                    <a key="edit" onClick={() => showEditModal(item)}>
+                      编辑
+                    </a>,
+                    renderMoreBtn(item),
+                  ]}
+                >
                   <List.Item.Meta
                     avatar={
                       <Avatar src={item.avatar} shape="square" size="large" />

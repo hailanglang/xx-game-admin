@@ -34,6 +34,13 @@ declare namespace API {
     currentUser: UserInfoDto;
   };
 
+  type PaginatedUserDto = {
+    list: UserDetailDto[];
+    total: number;
+    page: number;
+    pageSize: number;
+  };
+
   type RolesControllerAssignPermissionsParams = {
     id: string;
   };
@@ -83,6 +90,29 @@ declare namespace API {
     roleId?: number;
   };
 
+  type UserDetailDto = {
+    id: number;
+    username: string;
+    email: string;
+    avatar: string;
+    status: boolean;
+    roleId: number;
+    lastLoginAt: string;
+    createdAt: string;
+    role: { id: number; name: string };
+  };
+
+  type UserDto = {
+    id: number;
+    username: string;
+    email: string;
+    avatar: string;
+    status: boolean;
+    roleId: number;
+    lastLoginAt: string;
+    createdAt: string;
+  };
+
   type UserInfoDto = {
     id: number;
     username: string;
@@ -110,10 +140,5 @@ declare namespace API {
 
   type UsersControllerUpdateParams = {
     id: string;
-  };
-
-  type PageParams = {
-    current?: number;
-    pageSize?: number;
   };
 }

@@ -34,21 +34,16 @@ export default [
     ],
   },
   {
-    path: '/list',
+    path: '/user-list',
     icon: 'table',
-    name: '列表页',
-    routes: [
-      {
-        path: '/list',
-        redirect: '/list/basic-list',
-      },
-      {
-        name: 'basic-list',
-        icon: 'unorderedList',
-        path: '/list/basic-list',
-        component: './list/basic-list',
-      },
-    ],
+    name: '用户列表',
+    component: './user-list',
+  },
+  {
+    path: '/role-list',
+    icon: 'table',
+    name: '角色列表',
+    component: './role-list',
   },
   {
     path: '/',
