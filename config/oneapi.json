@@ -71,7 +71,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -121,7 +128,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedUserDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -148,7 +162,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/UserDetailDto"
                 }
               }
             }
@@ -182,7 +196,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -203,7 +224,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -588,20 +616,16 @@
             "type": "string"
           },
           "email": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "avatar": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "roleId": {
-            "type": "number",
-            "nullable": true
+            "type": "number"
           },
           "roleName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "permissions": {
             "type": "array",
@@ -613,6 +637,10 @@
         "required": [
           "id",
           "username",
+          "email",
+          "avatar",
+          "roleId",
+          "roleName",
           "permissions"
         ]
       },
@@ -655,6 +683,138 @@
         "required": [
           "username",
           "password"
+        ]
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "avatar": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "roleId": {
+            "type": "number",
+            "nullable": true
+          },
+          "lastLoginAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "email",
+          "avatar",
+          "status",
+          "roleId",
+          "lastLoginAt",
+          "createdAt"
+        ]
+      },
+      "UserDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "avatar": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "boolean"
+          },
+          "roleId": {
+            "type": "number",
+            "nullable": true
+          },
+          "lastLoginAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "role": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "email",
+          "avatar",
+          "status",
+          "roleId",
+          "lastLoginAt",
+          "createdAt",
+          "role"
+        ]
+      },
+      "PaginatedUserDto": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserDetailDto"
+            }
+          },
+          "total": {
+            "type": "number"
+          },
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "list",
+          "total",
+          "page",
+          "pageSize"
         ]
       },
       "UpdateUserDto": {

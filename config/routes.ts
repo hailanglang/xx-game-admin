@@ -36,7 +36,7 @@ export default [
   {
     path: '/list',
     icon: 'table',
-    name: 'list',
+    name: '列表页',
     routes: [
       {
         path: '/list',

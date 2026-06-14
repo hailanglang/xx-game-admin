@@ -1,49 +1,26 @@
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Avatar,
-  Button,
   Card,
-  Col,
   Dropdown,
   Input,
   List,
   Modal,
-  Progress,
   Row,
   Segmented,
 } from 'antd';
-import dayjs from 'dayjs';
 import type { FC } from 'react';
-import React, { useState } from 'react';
-import OperationModal from './components/OperationModal';
+import React from 'react';
 import type { BasicListItemDataType } from './data.d';
-import {
-  addFakeList,
-  queryFakeList,
-  removeFakeList,
-  updateFakeList,
-} from './service';
+import { addUser, queryUserList, removeUser, updateUser } from './service';
 import useStyles from './style.style';
 
 const { Search } = Input;
-const Info: FC<{
-  title: React.ReactNode;
-  value: React.ReactNode;
-  bordered?: boolean;
-}> = ({ title, value, bordered }) => {
-  const { styles } = useStyles();
-  return (
-    <div className={styles.headerInfo}>
-      <span>{title}</span>
-      <p>{value}</p>
-      {bordered && <em />}
-    </div>
-  );
-};
+
 const ListContent = ({
-  data: { owner, createdAt, percent, status },
+  data: { email, roleName },
 }: {
   data: BasicListItemDataType;
 }) => {
@@ -51,51 +28,38 @@ const ListContent = ({
   return (
     <div>
       <div className={styles.listContentItem}>
-        <span>Owner</span>
-        <p>{owner}</p>
+        <span>邮箱</span>
+        <p>{email}</p>
       </div>
       <div className={styles.listContentItem}>
-        <span>开始时间</span>
-        <p>{dayjs(createdAt).format('YYYY-MM-DD HH:mm')}</p>
-      </div>
-      <div className={styles.listContentItem}>
-        <Progress
-          percent={percent}
-          status={status}
-          size={6}
-          style={{
-            width: 180,
-          }}
-        />
+        <span>角色</span>
+        <p>{roleName}</p>
       </div>
     </div>
   );
 };
+
 const BasicList: FC = () => {
   const { styles } = useStyles();
-  const [done, setDone] = useState<boolean>(false);
-  const [open, setVisible] = useState<boolean>(false);
-  const [current, setCurrent] = useState<
-    Partial<BasicListItemDataType> | undefined
-  >(undefined);
-  const { data: listData, isLoading: loading } = useQuery({
-    queryKey: ['basic-list'],
-    queryFn: () => queryFakeList({ count: 50 }).then((res) => res.data),
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['user-list'],
+    queryFn: () => queryUserList({ page: 1, pageSize: 50 }),
   });
-
+  const userList = data && data.list;
+  console.log('data', data);
   const queryClient = useQueryClient();
   const { mutate: postRun } = useMutation({
     mutationFn: async ({ method, params }: { method: string; params: any }) => {
       if (method === 'remove') {
-        return removeFakeList(params);
+        return removeUser({ id: params.id });
       }
       if (method === 'update') {
-        return updateFakeList(params);
+        return updateUser({ id: params.id }, params);
       }
-      return addFakeList(params);
+      return addUser(params);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['basic-list'] });
+      queryClient.invalidateQueries({ queryKey: ['user-list'] });
     },
   });
 
@@ -103,16 +67,12 @@ const BasicList: FC = () => {
   const runListOperation = (method: string, params: any) => {
     postRun({ method, params });
   };
-  const list = listData?.list || [];
+  const list = Array.isArray(userList) ? userList : [];
   const paginationProps = {
     showSizeChanger: true,
     showQuickJumper: true,
     pageSize: 5,
     total: list.length,
-  };
-  const showEditModal = (item: BasicListItemDataType) => {
-    setVisible(true);
-    setCurrent(item);
   };
   const deleteItem = (id: string) => {
     runListOperation('remove', {
@@ -123,14 +83,13 @@ const BasicList: FC = () => {
     key: string | number,
     currentItem: BasicListItemDataType,
   ) => {
-    if (key === 'edit') showEditModal(currentItem);
-    else if (key === 'delete') {
+    if (key === 'delete') {
       Modal.confirm({
-        title: '删除任务',
-        content: '确定删除该任务吗？',
+        title: '删除用户',
+        content: '确定删除该用户吗？',
         okText: '确认',
         cancelText: '取消',
-        onOk: () => deleteItem(currentItem.id),
+        onOk: () => deleteItem(String(currentItem.id)),
       });
     }
   };
@@ -143,7 +102,6 @@ const BasicList: FC = () => {
           { label: '进行中', value: 'progress' },
           { label: '等待中', value: 'waiting' },
         ]}
-        // 如有需要可添加 onChange 事件
       />
       <Search
         className={styles.extraContentSearch}
@@ -161,10 +119,6 @@ const BasicList: FC = () => {
           onClick: ({ key }) => editAndDelete(key, item),
           items: [
             {
-              key: 'edit',
-              label: '编辑',
-            },
-            {
               key: 'delete',
               label: '删除',
             },
@@ -178,47 +132,14 @@ const BasicList: FC = () => {
     );
   };
 
-  const handleDone = () => {
-    setDone(false);
-    setVisible(false);
-    setCurrent({});
-  };
-  const handleSubmit = (values: BasicListItemDataType) => {
-    setDone(true);
-    const method = values?.id ? 'update' : 'add';
-    runListOperation(method, values);
-  };
   return (
     <div>
       <PageContainer>
         <div className={styles.standardList}>
-          <Card variant="borderless">
-            <Row>
-              <Col sm={8} xs={24}>
-                <Info title="我的待办" value="8个任务" bordered />
-              </Col>
-              <Col sm={8} xs={24}>
-                <Info title="本周任务平均处理时间" value="32分钟" bordered />
-              </Col>
-              <Col sm={8} xs={24}>
-                <Info title="本周完成任务数" value="24个任务" />
-              </Col>
-            </Row>
-          </Card>
-
           <Card
             className={styles.listCard}
             variant="borderless"
-            title="基本列表"
-            style={{
-              marginTop: 24,
-            }}
-            styles={{
-              body: {
-                padding: '0 32px 40px 32px',
-              },
-            }}
-            extra={extraContent}
+            title="用户列表"
           >
             <List
               size="large"
@@ -227,27 +148,13 @@ const BasicList: FC = () => {
               pagination={paginationProps}
               dataSource={list}
               renderItem={(item) => (
-                <List.Item
-                  actions={[
-                    <a
-                      key="edit"
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        showEditModal(item);
-                      }}
-                    >
-                      编辑
-                    </a>,
-                    renderMoreBtn(item),
-                  ]}
-                >
+                <List.Item actions={[renderMoreBtn(item)]}>
                   <List.Item.Meta
                     avatar={
-                      <Avatar src={item.logo} shape="square" size="large" />
+                      <Avatar src={item.avatar} shape="square" size="large" />
                     }
-                    title={<a href={item.href}>{item.title}</a>}
-                    description={item.subDescription}
+                    title={<a>{item.username}</a>}
+                    description={`ID: ${item.id}`}
                   />
                   <ListContent data={item} />
                 </List.Item>
@@ -256,26 +163,6 @@ const BasicList: FC = () => {
           </Card>
         </div>
       </PageContainer>
-      <Button
-        type="dashed"
-        onClick={() => {
-          setVisible(true);
-        }}
-        style={{
-          width: '100%',
-          marginBottom: 8,
-        }}
-      >
-        <PlusOutlined />
-        添加
-      </Button>
-      <OperationModal
-        done={done}
-        open={open}
-        current={current}
-        onDone={handleDone}
-        onSubmit={handleSubmit}
-      />
     </div>
   );
 };
