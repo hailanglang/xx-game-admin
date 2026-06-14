@@ -1,13 +1,15 @@
+import { permissionsControllerFindGrouped } from '@/services/ant-design-pro/permissions';
 import {
-  usersControllerCreate,
-  usersControllerFindAll,
-  usersControllerRemove,
-  usersControllerUpdate,
-} from '@/services/ant-design-pro/users';
+  rolesControllerAssignPermissions,
+  rolesControllerCreate,
+  rolesControllerFindAll,
+  rolesControllerRemove,
+} from '@/services/ant-design-pro/roles';
 
 export {
-  usersControllerCreate as addUser,
-  usersControllerFindAll as queryUserList,
-  usersControllerRemove as removeUser,
-  usersControllerUpdate as updateUser,
+  permissionsControllerFindGrouped as queryGroupedPermissions,
+  rolesControllerAssignPermissions as assignPermissions,
+  rolesControllerCreate as createRole,
+  rolesControllerFindAll as queryRoleList,
+  rolesControllerRemove as removeRole,
 };

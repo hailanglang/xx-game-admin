@@ -1,201 +1,185 @@
-import { DownOutlined } from '@ant-design/icons';
-import { PageContainer } from '@ant-design/pro-components';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { BadgeProps } from 'antd';
-import {
-  Avatar,
-  Badge,
-  Card,
-  Dropdown,
-  Input,
-  List,
-  Modal,
-  Row,
-  Segmented,
-} from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import type { ProColumns } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Badge, Button, Modal, message } from 'antd';
+import dayjs from 'dayjs';
 import type { FC } from 'react';
-import React from 'react';
-import { addUser, queryUserList, removeUser, updateUser } from './service';
-import useStyles from './style.style';
+import React, { useState } from 'react';
+import CreateModal from './components/CreateModal';
+import PermissionModal from './components/PermissionModal';
+import { queryRoleList, removeRole } from './service';
 
-const { Search } = Input;
-
-const statusMap: Record<
-  string,
-  { status: BadgeProps['status']; text: string }
-> = {
-  true: { status: 'success', text: '启用' },
-  false: { status: 'error', text: '禁用' },
-};
-
-const ListContent = ({
-  data: { email, role, status },
-}: {
-  data: API.UserDetailDto;
-}) => {
-  const { styles } = useStyles();
-  const s = statusMap[String(status)] ?? { status: 'default', text: '未知' };
-  return (
-    <div>
-      <div className={styles.listContentItem}>
-        <span>邮箱</span>
-        <p>{email}</p>
-      </div>
-      <div className={styles.listContentItem}>
-        <span>角色</span>
-        <p>{role.name}</p>
-      </div>
-      <div className={styles.listContentItem}>
-        <span>状态</span>
-        <p>
-          <Badge status={s.status} text={s.text} />
-        </p>
-      </div>
-    </div>
-  );
-};
+const ROLE_LIST_QUERY_KEY = ['role-list'];
 
 const BasicList: FC = () => {
-  const { styles } = useStyles();
-  const { data, isLoading: loading } = useQuery({
-    queryKey: ['user-list'],
-    queryFn: () => queryUserList({ page: 1, pageSize: 50 }),
-  });
-  const userList = data && data.list;
-  console.log('data', data);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [permModalOpen, setPermModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<API.RoleDetailDto | null>(
+    null,
+  );
+
   const queryClient = useQueryClient();
-  const { mutate: postRun } = useMutation({
-    mutationFn: async ({ method, params }: { method: string; params: any }) => {
-      if (method === 'remove') {
-        return removeUser({ id: params.id });
-      }
-      if (method === 'update') {
-        return updateUser({ id: params.id }, params);
-      }
-      return addUser(params);
-    },
+
+  const refreshList = () => {
+    queryClient.invalidateQueries({ queryKey: ROLE_LIST_QUERY_KEY });
+  };
+
+  const { mutate: deleteRole } = useMutation({
+    mutationFn: (id: number) => removeRole({ id: String(id) }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-list'] });
+      message.success('删除成功');
+      refreshList();
+    },
+    onError: (error: any) => {
+      message.error(error?.message || '删除失败');
     },
   });
 
-  // Wrapper to handle the original calling convention
-  const runListOperation = (method: string, params: any) => {
-    postRun({ method, params });
-  };
-  const list = Array.isArray(userList) ? userList : [];
-  const paginationProps = {
-    showSizeChanger: true,
-    showQuickJumper: true,
-    pageSize: 5,
-    total: list.length,
-  };
-  const deleteItem = (id: string) => {
-    runListOperation('remove', {
-      id,
+  const handleDelete = (record: API.RoleDetailDto) => {
+    Modal.confirm({
+      title: '确认删除',
+      content: `确定删除角色「${record.name}」吗？`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => deleteRole(record.id),
     });
   };
-  const showEditModal = (item: API.UserDetailDto) => {
-    // TODO: 实现编辑用户弹窗
-    console.log('编辑用户', item);
-  };
-  const editAndDelete = (
-    key: string | number,
-    currentItem: API.UserDetailDto,
-  ) => {
-    if (key === 'edit') showEditModal(currentItem);
-    else if (key === 'delete') {
-      Modal.confirm({
-        title: '删除用户',
-        content: '确定删除该用户吗？',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => deleteItem(String(currentItem.id)),
-      });
-    }
-  };
-  const extraContent = (
-    <div>
-      <Segmented
-        defaultValue="all"
-        options={[
-          { label: '全部', value: 'all' },
-          { label: '进行中', value: 'progress' },
-          { label: '等待中', value: 'waiting' },
-        ]}
-      />
-      <Search
-        className={styles.extraContentSearch}
-        placeholder="请输入"
-        onSearch={() => ({})}
-        variant="filled"
-      />
-    </div>
-  );
 
-  const renderMoreBtn = (item: API.UserDetailDto) => {
-    return (
-      <Dropdown
-        menu={{
-          onClick: ({ key }) => editAndDelete(key, item),
-          items: [
-            {
-              key: 'edit',
-              label: '编辑',
-            },
-            {
-              key: 'delete',
-              label: '删除',
-            },
-          ],
-        }}
-      >
-        <a href="#">
-          更多 <DownOutlined />
-        </a>
-      </Dropdown>
-    );
+  const handlePermissionEdit = (record: API.RoleDetailDto) => {
+    setSelectedRole(record);
+    setPermModalOpen(true);
   };
+
+  const columns: ProColumns<API.RoleDetailDto>[] = [
+    {
+      title: '角色名称',
+      dataIndex: 'name',
+      key: 'name',
+      width: 160,
+    },
+    {
+      title: '描述',
+      dataIndex: 'description',
+      key: 'description',
+      ellipsis: true,
+      render: (_, record) => record.description || '-',
+    },
+    {
+      title: '用户数',
+      dataIndex: 'userCount',
+      key: 'userCount',
+      width: 80,
+      search: false,
+    },
+    {
+      title: '系统角色',
+      dataIndex: 'isSystem',
+      key: 'isSystem',
+      width: 110,
+      search: false,
+      render: (_, record) =>
+        record.isSystem ? (
+          <Badge status="success" text="系统内置" />
+        ) : (
+          <Badge status="warning" text="自定义" />
+        ),
+    },
+    {
+      title: '权限数',
+      dataIndex: 'permissions',
+      key: 'permissions',
+      width: 80,
+      search: false,
+      render: (_, record) => record.permissions?.length ?? 0,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      width: 170,
+      search: false,
+      render: (_, record) =>
+        record.createdAt
+          ? dayjs(record.createdAt).format('YYYY-MM-DD HH:mm')
+          : '-',
+    },
+    {
+      title: '操作',
+      key: 'action',
+      width: 200,
+      search: false,
+      render: (_, record) => (
+        <>
+          <Button
+            type="link"
+            disabled={record.isSystem}
+            onClick={() => handlePermissionEdit(record)}
+            title={record.isSystem ? '系统角色权限不可修改' : undefined}
+          >
+            权限编辑
+          </Button>
+          {!record.isSystem && (
+            <Button type="link" danger onClick={() => handleDelete(record)}>
+              删除
+            </Button>
+          )}
+        </>
+      ),
+    },
+  ];
 
   return (
-    <div>
-      <PageContainer>
-        <div className={styles.standardList}>
-          <Card
-            className={styles.listCard}
-            variant="borderless"
-            title="用户列表"
+    <PageContainer>
+      <ProTable<API.RoleDetailDto>
+        rowKey="id"
+        columns={columns}
+        request={async () => {
+          const data = await queryRoleList();
+          return { data, total: data.length, success: true };
+        }}
+        search={false}
+        toolBarRender={() => [
+          <Button
+            key="create"
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setCreateOpen(true)}
           >
-            <List
-              size="large"
-              rowKey="id"
-              loading={loading}
-              pagination={paginationProps}
-              dataSource={list}
-              renderItem={(item) => (
-                <List.Item
-                  actions={[
-                    <a key="edit" onClick={() => showEditModal(item)}>
-                      编辑
-                    </a>,
-                    renderMoreBtn(item),
-                  ]}
-                >
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar src={item.avatar} shape="square" size="large" />
-                    }
-                    title={<a>{item.username}</a>}
-                    description={`ID: ${item.id}`}
-                  />
-                  <ListContent data={item} />
-                </List.Item>
-              )}
-            />
-          </Card>
-        </div>
-      </PageContainer>
-    </div>
+            新建角色
+          </Button>,
+        ]}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+        }}
+      />
+
+      <CreateModal
+        open={createOpen}
+        onCancel={() => setCreateOpen(false)}
+        onSuccess={() => {
+          setCreateOpen(false);
+          refreshList();
+        }}
+      />
+
+      <PermissionModal
+        open={permModalOpen}
+        role={selectedRole}
+        onCancel={() => {
+          setPermModalOpen(false);
+          setSelectedRole(null);
+        }}
+        onSuccess={() => {
+          setPermModalOpen(false);
+          setSelectedRole(null);
+          refreshList();
+        }}
+      />
+    </PageContainer>
   );
 };
+
 export default BasicList;
